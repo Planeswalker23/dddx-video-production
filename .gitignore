@@ -1,0 +1,6 @@
+.DS_Store
+**/.DS_Store
+_user_meta.json
+*.log
+.venv/
+__pycache__/
