@@ -43,12 +43,64 @@ bash scripts/bgm-check.sh ~/Music/bgm/*.mp3 --need 62
 
 - 镜表的时间轴以口播为绝对时钟：音频出来后用 `manifest.json` 的真实秒数重排，不要反过来改音频凑画面。
 - 动效段落自带音效（-16 LUFS 完整混音），要么保留并整段降到 -26 ~ -30 LUFS，要么整段静音，**不要叠两层**。
-- BGM 底板先拉到 -32 ~ -36 LUFS（现代曲库母带都很响，bed gain 常在 -20 ~ -24 dB），modern 曲库低频占比超 35% 的先做 120 Hz 低切。
+- BGM 底板先拉到 -32 ~ -36 LUFS（现代曲库母带都很响，bed gain 常在 -20 ~ -24 dB），低频占比超 35% 的先做 120 Hz 低切。
 - 平台自带曲库（抖音 / 剪映 / B站 / YouTube Audio Library）授权只覆盖平台内发布，导出 mp4 跨平台分发即越界。
 - 素材原声一律静音。
 
 详见 `SKILL.md`。
 
-## 使用
+## 安装到 WorkBuddy
 
-把本目录放到技能目录下（如 `~/.workbuddy/skills/dddx-video-production/`），确保 `SKILL.md` 在根目录，`scripts/` 随行。
+技能分用户级和项目级两种装法。**装完必须开新对话**——技能列表在会话开始时加载，当前这一轮里看不到新技能。
+
+### 用户级（所有项目可用）
+
+```bash
+git clone https://github.com/Planeswalker23/dddx-video-production.git \
+  ~/.workbuddy/skills/dddx-video-production
+```
+
+### 项目级（只在某个工作区可用）
+
+```bash
+mkdir -p <工作区>/.workbuddy/skills
+git clone https://github.com/Planeswalker23/dddx-video-production.git \
+  <工作区>/.workbuddy/skills/dddx-video-production
+```
+
+### 更新
+
+```bash
+cd ~/.workbuddy/skills/dddx-video-production && git pull
+```
+
+### 装完先自检
+
+```bash
+bash ~/.workbuddy/skills/dddx-video-production/scripts/check-tools.sh
+```
+
+Windows：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.workbuddy\skills\dddx-video-production\scripts\check-tools.ps1"
+```
+
+末行 `RESULT: ALL_READY` 才能进阶段 3、4；`RESULT: BLOCKED (...)` 会写明缺哪个。
+
+### 还要单独装的（本仓库不含）
+
+| 依赖 | 怎么装 |
+|---|---|
+| **onetake**（动效段落） | `git clone https://github.com/feitangyuan/onetake.git ~/.workbuddy/skills/onetake`，再按它的 SKILL.md 装 python 依赖（playwright + chromium、numpy / scipy / pillow / matplotlib / fonttools / brotli / opencv-python）。它是 **PolyForm Noncommercial** 许可，商用需另行取得授权 |
+| **Voicebox**（口播 TTS） | macOS：https://voicebox.sh/download?platform=macos ；Windows：https://voicebox.sh/download/windows |
+| **ChatCut Desktop**（剪辑） | macOS：`curl -fsSL https://chatcut.io/install.sh \| sh` ；Windows：`irm https://chatcut.io/install.ps1 \| iex` |
+| **Node 22+** | https://nodejs.org/en/download |
+| **ffmpeg / ffprobe** | `brew install ffmpeg` 或 https://ffmpeg.org/download.html |
+
+ChatCut 装完要**登录**，然后**开新对话**才能拿到 `chatcut_desktop` 工具（工具在会话开始加载，装的那一轮没有）。
+
+### 不在仓库里的东西
+
+- **BGM 曲库**在本地 `~/Music/bgm/`，含 `README.md`（命名规则、选曲标准）和 `license-ledger.md`（授权台账）。曲目受各曲库授权约束，不随仓库分发；换机器时按 `README.md` 的「加新曲子的流程」重建，或整目录拷过去（连同台账）。
+
